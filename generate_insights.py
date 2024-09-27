@@ -325,16 +325,18 @@ def handle_presentation_response(response):
     prs.save(buffer)
     buffer.seek(0)  # Reset buffer position to the start
 
-    # Create a downloadable link for the presentation
+    # Create a downloadable link for the presentation with a unique key
     st.download_button(
         label="Download Presentation",
         data=buffer,
         file_name="generated_presentation.pptx",
-        mime="application/vnd.openxmlformats-officedocument.presentationml.presentation"
+        mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        key="download_presentation_button"  # Unique key for this button
     )
+
 # Handle Word document generation
 def handle_word_doc_response(response):
-    cleaned_text = response.replace("```json\n", "").replace("```", "").strip()
+    cleaned_text = response.strip()  # Clean the response text
 
     # Try to load the response as JSON. If it's not JSON, treat it as plain text.
     try:
@@ -343,6 +345,7 @@ def handle_word_doc_response(response):
         st.write("Response is not in JSON format. Treating as plain text.")
         content = {"title": "Generated Document", "sections": [{"heading": "", "body": cleaned_text}]}
 
+    # Create a Word document in memory
     doc = Document()
     
     # Add title to the document
@@ -363,13 +366,15 @@ def handle_word_doc_response(response):
     doc.save(buffer)
     buffer.seek(0)  # Reset buffer position to the start
 
-    # Create a downloadable link for the document
+    # Create a downloadable link for the document with a unique key
     st.download_button(
         label="Download Document",
         data=buffer,
         file_name="generated_document.docx",
-        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        key="download_doc_button"  # Unique key for this button
     )
+
 # ------------------ Streamlit Interface ------------------
 
 st.title("Meeting Insights Generator")
