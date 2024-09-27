@@ -336,7 +336,7 @@ def handle_presentation_response(response):
 
 # Handle Word document generation
 def handle_word_doc_response(response):
-    cleaned_text = llmcontent.replace("```json\n", "").replace("```", "").strip()
+    cleaned_text = response.replace("```json\n", "").replace("```", "").strip()
 
     # Try to load the response as JSON. If it's not JSON, treat it as plain text.
     try:
