@@ -277,9 +277,9 @@ def process_file(file, assemblyai_key, gemini_key, prompt_type):
     if response:
         st.write(f"Generated {prompt_type.capitalize()}:\n")
         
-        if prompt_type == "presentation":
+        if prompt_type == "Presentation":
             handle_presentation_response(response)  # Generate PowerPoint
-        elif prompt_type == "doc":
+        elif prompt_type == "Requirement Document":
             handle_word_doc_response(response)  # Generate Word document
         else:
             handle_text_response(response)  # Generate Text file
@@ -343,7 +343,6 @@ def handle_word_doc_response(response):
         st.write("Response is not in JSON format. Treating as plain text.")
         content = {"title": "Generated Document", "sections": [{"heading": "", "body": cleaned_text}]}
 
-    # Create a Word document in memory
     doc = Document()
     
     # Add title to the document
@@ -401,7 +400,7 @@ if uploaded_file and st.button("Process File"):
         
         if response:
             # Handle Presentation or Document generation
-            if prompt_type == "presentation":
+            if prompt_type == "Presentation":
                 handle_presentation_response(response)
-            elif prompt_type == "doc":
+            elif prompt_type == "Requirement Document":
                 handle_word_doc_response(response)
