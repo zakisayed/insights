@@ -326,13 +326,13 @@ def handle_presentation_response(response):
     buffer.seek(0)  # Reset buffer position to the start
 
     # Create a downloadable link for the presentation with a unique key
-    st.download_button(
-        label="Download Presentation",
-        data=buffer,
-        file_name="generated_presentation.pptx",
-        mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        key="download_presentation_button"  # Unique key for this button
-    )
+    for i, presentation in enumerate(response):  # Loop through each presentation in response
+        st.download_button(
+            label=f"Download {presentation['name']}",  # Unique label for each presentation
+            data=presentation['data'],  # The data for the presentation
+            file_name=presentation['name'],  # Use the name from the presentation object
+            key=f"presentation_download_button_{i}"  # Unique key for each button
+        )
 
 # Handle Word document generation
 def handle_word_doc_response(response):
@@ -367,13 +367,13 @@ def handle_word_doc_response(response):
     buffer.seek(0)  # Reset buffer position to the start
 
     # Create a downloadable link for the document with a unique key
-    st.download_button(
-        label="Download Document",
-        data=buffer,
-        file_name="generated_document.docx",
-        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        key="download_doc_button"  # Unique key for this button
-    )
+    for i, file in enumerate(response):  # Loop through each file in response
+        st.download_button(
+            label=f"Download {file['name']}",  # Unique label for each file
+            data=file['data'],  # The file data
+            file_name=file['name'],  # Use the name from the file object
+            key=f"download_button_{i}"  # Unique key for each button
+        )
 
 # ------------------ Streamlit Interface ------------------
 
