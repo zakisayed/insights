@@ -1,0 +1,6 @@
+streamlit
+moviepy
+assemblyai
+google-generativeai
+python-docx
+python-pptx
