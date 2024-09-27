@@ -12,7 +12,7 @@ from io import BytesIO
 import json
 from docx import Document
 import tempfile
-
+import time
 # ------------------ Utility Functions ------------------
 
 # Load API keys from user inputs (Session State)
@@ -288,23 +288,6 @@ def process_file(file, assemblyai_key, gemini_key, prompt_type):
     else:
         st.error(f"Failed to generate {prompt_type.capitalize()}.")
 
-def handle_text_response(response):
-    # Clean and prepare the response text
-    cleaned_text = response.strip()
-
-    # Create a downloadable text file
-    buffer = BytesIO()
-    buffer.write(cleaned_text.encode('utf-8'))  # Write the response as bytes
-    buffer.seek(0)  # Reset buffer position to the start
-
-    # Create a download button for the text file
-    st.download_button(
-        label="Download Text Output",
-        data=buffer,
-        file_name="generated_output.txt",
-        mime="text/plain"
-    )
-# Handle PowerPoint generation
 def handle_presentation_response(response):
     response_json = json.loads(response)  # Parse JSON response
     prs = Presentation()
@@ -326,15 +309,14 @@ def handle_presentation_response(response):
     buffer.seek(0)  # Reset buffer position to the start
 
     # Create a downloadable link for the presentation with a unique key
-    for i, presentation in enumerate(response):  # Loop through each presentation in response
-        st.download_button(
-            label=f"Download {presentation['name']}",  # Unique label for each presentation
-            data=presentation['data'],  # The data for the presentation
-            file_name=presentation['name'],  # Use the name from the presentation object
-            key=f"presentation_download_button_{i}"  # Unique key for each button
-        )
+    st.download_button(
+        label="Download Presentation",
+        data=buffer,
+        file_name="generated_presentation.pptx",
+        mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        key="download_presentation_button"  # Unique key for this button
+    )
 
-# Handle Word document generation
 def handle_word_doc_response(response):
     cleaned_text = response.replace("```json\n", "").replace("```", "").strip()
 
@@ -366,15 +348,39 @@ def handle_word_doc_response(response):
     doc.save(buffer)
     buffer.seek(0)  # Reset buffer position to the start
 
-    # Create a downloadable link for the document with a unique key
-    for i, file in enumerate(response):  # Loop through each file in response
-        st.download_button(
-            label=f"Download {file['name']}",  # Unique label for each file
-            data=file['data'],  # The file data
-            file_name=file['name'],  # Use the name from the file object
-            key=f"download_button_{i}"  # Unique key for each button
-        )
+    # Create a unique key for the download button using a timestamp
+    unique_key = f"download_doc_button_{int(time.time())}"
 
+    # Create a downloadable link for the document with a unique key
+    st.download_button(
+        label="Download Document",
+        data=buffer,
+        file_name="generated_document.docx",
+        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        key=unique_key  # Unique key for this button
+    )
+
+# Handle text response
+def handle_text_response(response):
+    # Clean and prepare the response text
+    cleaned_text = response.strip()
+
+    # Create a downloadable text file
+    buffer = BytesIO()
+    buffer.write(cleaned_text.encode('utf-8'))  # Write the response as bytes
+    buffer.seek(0)  # Reset buffer position to the start
+
+    # Create a unique key for the download button using a timestamp
+    unique_key = f"download_meeting_minutes_{int(time.time())}"
+
+    # Create a download button for the text file
+    st.download_button(
+        label="Download Meeting Minutes",
+        data=buffer,
+        file_name="generated_output.txt",
+        mime="text/plain",
+        key=unique_key  # Unique key for this button
+    )
 # ------------------ Streamlit Interface ------------------
 
 st.title("Meeting Insights Generator")
@@ -403,9 +409,9 @@ if uploaded_file and st.button("Process File"):
     else:
         response = process_file(uploaded_file, assemblyai_key, gemini_key, prompt_type)
         
-        if response:
-            # Handle Presentation or Document generation
-            if prompt_type == "Presentation":
-                handle_presentation_response(response)
-            elif prompt_type == "Requirement Document":
-                handle_word_doc_response(response)
+        # if response:
+        #     # Handle Presentation or Document generation
+        #     if prompt_type == "Presentation":
+        #         handle_presentation_response(response)
+        #     elif prompt_type == "Requirement Document":
+        #         handle_word_doc_response(response)
