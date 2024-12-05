@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 import json
-from moviepy.editor import VideoFileClip
+from moviepy import VideoFileClip
 import assemblyai as aai
 import google.generativeai as genai
 from docx import Document
